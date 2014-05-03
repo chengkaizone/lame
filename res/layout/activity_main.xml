@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/et_wav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="源文件的路径"
+        android:text="/sdcard/ylzs.wav" />
+    
+    <EditText
+        android:id="@+id/et_mp3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="目标文件的路径"
+        android:text="/sdcard/ylzs.mp3" />
+	<Button 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="convert"
+	    android:text="开始转换"
+	    />
+	<Button 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="stop"
+	    android:text="停止转换"
+	    />
+	<Button 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="getVersion"
+	    android:text="获取lame版本号"
+	    />
+</LinearLayout>
