@@ -33,7 +33,7 @@ char* Jstring2CStr(JNIEnv* env, jstring jstr) {
 //这里调用java代码中setConvertProgress方法
 void publishJavaProgress(JNIEnv * env, jobject obj,jint progress){
 	//找到类定义
-	jclass clazz=(*env)->FindClass(env,"com.lance.lame.LameConvert");
+	jclass clazz=(*env)->FindClass(env,"com/lance/lame/LameConvert");
 	if(clazz==0){
 		LOGI("not find class !");
 		return;
