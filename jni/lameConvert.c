@@ -7,7 +7,7 @@
 
 #define LOG_TAG "System.out"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)//__VA_ARGS__±íÊ¾¿É±ä²ÎÊı
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)//__VA_ARGS__è¡¨ç¤ºå¯å˜å‚æ•°
 #define unit 8192
 
 char* Jstring2CStr(JNIEnv* env, jstring jstr) {
@@ -25,25 +25,26 @@ char* Jstring2CStr(JNIEnv* env, jstring jstr) {
 		memcpy(rtn, ba, alen);
 		rtn[alen] = 0;
 	}
-	//rtnÊÇ¶¯Ì¬ÄÚ´æ·ÖÅä---½«baÖ¸ÕëµÄÄÚÈİ¿½±´µ½rtnÖĞ,ËùÒÔºóÃæĞèÒªÊÍ·ÅµÄÊÇbaÖ¸Õë
+	//rtnæ˜¯åŠ¨æ€å†…å­˜åˆ†é…---å°†baæŒ‡é’ˆçš„å†…å®¹æ‹·è´åˆ°rtnä¸­,æ‰€ä»¥åé¢éœ€è¦é‡Šæ”¾çš„æ˜¯baæŒ‡é’ˆ
 	(*env)->ReleaseByteArrayElements(env, barr, rtn, 0); //
 	return rtn;
 }
 
-//ÕâÀïµ÷ÓÃjava´úÂëÖĞsetConvertProgress·½·¨
+//è¿™é‡Œè°ƒç”¨javaä»£ç ä¸­setConvertProgressæ–¹æ³•
 void publishJavaProgress(JNIEnv * env, jobject obj,jint progress){
-	//ÕÒµ½Àà¶¨Òå
+	//æ‰¾åˆ°ç±»å®šä¹‰
 	jclass clazz=(*env)->FindClass(env,"com.lance.lame.LameConvert");
 	if(clazz==0){
 		LOGI("not find class !");
 		return;
 	}
-	//ÕÒµ½·½·¨¶¨Òå
+	//æ‰¾åˆ°æ–¹æ³•å®šä¹‰
 	jmethodID method=(*env)->GetMethodID(env,clazz,"setConvertProgress","(I)V");
 	if(method==0){
 		LOGI("can not find method!");
+                return;
 	}
-	//µ÷ÓÃ·½·¨
+	//è°ƒç”¨æ–¹æ³•
 	(*env)->CallVoidMethod(env,obj,method,progress);
 }
 
@@ -62,7 +63,7 @@ int flag=0;
 
 JNIEXPORT void JNICALL Java_com_lance_lame_LameConvert_stop
   (JNIEnv * env, jobject obj){
-	flag=404;//ÓÃÓÚÍ£Ö¹×ª»»
+	flag=404;//ç”¨äºåœæ­¢è½¬æ¢
 }
 JNIEXPORT void JNICALL Java_com_lance_lame_LameConvert_convertmp3
   (JNIEnv * env, jobject obj, jstring jwav, jstring jmp3){
@@ -73,42 +74,42 @@ JNIEXPORT void JNICALL Java_com_lance_lame_LameConvert_convertmp3
 	LOGI("mp3 = %s",cmp3);
 
 	FILE * fwav = fopen(cwav,"rb");
-	//Ã½ÌåÎÄ¼şĞèÒªÊ¹ÓÃ¶ş½øÖÆµÄ·½Ê½´ò¿ªºÍĞ´Èë
+	//åª’ä½“æ–‡ä»¶éœ€è¦ä½¿ç”¨äºŒè¿›åˆ¶çš„æ–¹å¼æ‰“å¼€å’Œå†™å…¥
 	FILE * fmp3 = fopen(cmp3,"wb");
 
 	short int wav_buffer[unit*2];
 	unsigned char mp3_buffer[unit];
 
-	//³õÊ¼»¯±àÂëÆ÷
+	//åˆå§‹åŒ–ç¼–ç å™¨
 	lame_t lame=lame_init();
-	//ÉèÖÃ²ÉÑùÂÊ
+	//è®¾ç½®é‡‡æ ·ç‡
 	lame_set_in_samplerate(lame,44100);
 	lame_set_num_channels(lame,2);
 
-	//ÉèÖÃ±àÂë·½Ê½
+	//è®¾ç½®ç¼–ç æ–¹å¼
 	lame_set_VBR(lame, vbr_default);
-	//ÏÔÊ¾µÄµ÷ÓÃÕâ¸ö·½·¨
+	//æ˜¾ç¤ºçš„è°ƒç”¨è¿™ä¸ªæ–¹æ³•
 	lame_init_params(lame);
 
 	LOGI("lame init finish!");
 
 	int read;
 	int write;
-	int total=0;//µ±Ç°¶ÁµÄwavÎÄ¼şµÄbyteÊıÄ¿
+	int total=0;//å½“å‰è¯»çš„wavæ–‡ä»¶çš„byteæ•°ç›®
 	flag=0;
 	do{
 		if(flag==404){
 			LOGI("convert stop!");
-			break;//ÖÕÖ¹ÒôÆµ×ª»»
+			break;//ç»ˆæ­¢éŸ³é¢‘è½¬æ¢
 		}
-		//¶ÁÈ¡ÎÄ¼ş
+		//è¯»å–æ–‡ä»¶
 		read=fread(wav_buffer,sizeof(short int)*2,unit,fwav);
 		total+=read*sizeof(short int)*2;
-		//ÔÚ´Ë´¦µ÷ÓÃjavaÖĞµÄ·½·¨
+		//åœ¨æ­¤å¤„è°ƒç”¨javaä¸­çš„æ–¹æ³•
 		publishJavaProgress(env,obj,total);
 		LOGI("converting...%d",total);
 		if(read!=0){
-			//·µ»Ø×ª»¯µÄ³¤¶È
+			//è¿”å›è½¬åŒ–çš„é•¿åº¦
 			write=lame_encode_buffer_interleaved(lame,wav_buffer,read,mp3_buffer,unit);
 			LOGI("write...");
 			fwrite(mp3_buffer,sizeof(unsigned char),write,fmp3);
@@ -119,7 +120,7 @@ JNIEXPORT void JNICALL Java_com_lance_lame_LameConvert_convertmp3
 	}while(read!=0);
 
 	LOGI("convert finish!");
-	//¹Ø±Õlame±àÂëÆ÷
+	//å…³é—­lameç¼–ç å™¨
 
 	lame_close(lame);
 	LOGI("close wav");
